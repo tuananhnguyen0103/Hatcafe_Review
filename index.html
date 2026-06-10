@@ -195,7 +195,7 @@
       bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
-      background: #2d7a3a;
+      background: #b0290a;
       color: #fff;
       padding: 14px 28px;
       border-radius: 50px;
@@ -206,12 +206,67 @@
       animation: slideUp 0.3s ease;
     }
 
-    .toast.error { background: #b0290a; }
-
     @keyframes slideUp {
       from { transform: translateX(-50%) translateY(20px); opacity: 0; }
       to   { transform: translateX(-50%) translateY(0); opacity: 1; }
     }
+
+    /* Modal thành công */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal-box {
+      background: #fff8f2;
+      border-radius: 24px;
+      padding: 40px 32px 32px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .modal-icon { font-size: 56px; margin-bottom: 12px; }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #3b1a07;
+      margin-bottom: 8px;
+    }
+
+    .modal-sub {
+      font-size: 14px;
+      color: #7c5030;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .modal-ok {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #c8540a, #e87a30);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+    .modal-ok:active { opacity: 0.85; }
 
     .footer {
       text-align: center;
@@ -294,6 +349,16 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Modal thành công -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box">
+    <div class="modal-icon">☕</div>
+    <div class="modal-title">Cảm ơn bạn!</div>
+    <div class="modal-sub">Đánh giá của bạn đã được ghi nhận.<br>Hẹn gặp lại tại Hatcafe! ♥</div>
+    <button class="modal-ok" onclick="closeAndExit()">OK</button>
+  </div>
+</div>
+
 <script>
   // ============================================================
   // CẤU HÌNH – thay YOUR_SCRIPT_URL bằng URL Apps Script của bạn
@@ -365,14 +430,30 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      showToast("✅ Cảm ơn bạn! Đánh giá đã được ghi nhận.");
-      resetForm();
+      document.getElementById("successModal").classList.add("show");
     } catch (e) {
-      showToast("❌ Gửi thất bại, vui lòng thử lại.", true);
+      showToast("❌ Gửi thất bại, vui lòng thử lại.");
     }
 
     btn.disabled = false;
     btn.textContent = "Gửi đánh giá ✉️";
+  }
+
+  function closeAndExit() {
+    window.close();
+    // Fallback nếu trình duyệt không cho đóng tab (mobile thường vậy)
+    setTimeout(() => {
+      document.getElementById("successModal").classList.remove("show");
+      resetForm();
+      document.body.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a0a00;font-family:sans-serif;text-align:center;padding:20px;">
+          <div>
+            <div style="font-size:60px">☕</div>
+            <div style="color:#f5c97a;font-size:22px;font-weight:700;margin:16px 0 8px">Cảm ơn bạn!</div>
+            <div style="color:#d4a96a;font-size:14px">Bạn có thể đóng tab này.</div>
+          </div>
+        </div>`;
+    }, 300);
   }
 
   function resetForm() {

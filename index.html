@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hatcafe – Đánh giá trải nghiệm</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a0a00;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff8f2;
+      border-radius: 24px;
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #3b1a07 0%, #7c3e0a 100%);
+      padding: 36px 28px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .logo-icon {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      color: #f5c97a;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .header p {
+      color: #d4a96a;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .body {
+      padding: 28px 28px 32px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7c3e0a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .criteria-group {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .criterion {
+      background: #fff;
+      border: 1.5px solid #f0ddc8;
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    .criterion-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3b1a07;
+      margin-bottom: 12px;
+    }
+
+    .criterion-label .icon { font-size: 18px; }
+
+    .stars {
+      display: flex;
+      gap: 6px;
+    }
+
+    .star-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #e8c9a0;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #b08050;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .star-btn:hover,
+    .star-btn.active {
+      background: #c8540a;
+      border-color: #c8540a;
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .star-btn.active ~ .star-btn {
+      background: #fff;
+      border-color: #e8c9a0;
+      color: #b08050;
+      transform: scale(1);
+    }
+
+    .score-display {
+      margin-left: auto;
+      font-size: 22px;
+      font-weight: 800;
+      color: #c8540a;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    .criterion-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .comment-section { margin-bottom: 28px; }
+
+    .comment-section textarea {
+      width: 100%;
+      border: 1.5px solid #f0ddc8;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #3b1a07;
+      background: #fff;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .comment-section textarea:focus {
+      border-color: #c8540a;
+    }
+
+    .comment-section textarea::placeholder { color: #c8a080; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #c8540a, #e87a30);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover { opacity: 0.9; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .toast {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d7a3a;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+      z-index: 99;
+      animation: slideUp 0.3s ease;
+    }
+
+    .toast.error { background: #b0290a; }
+
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 0 28px 20px;
+      font-size: 11px;
+      color: #c8a080;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="logo-icon">☕</div>
+    <h1>HATCAFE</h1>
+    <p>Chia sẻ trải nghiệm của bạn với chúng tôi</p>
+  </div>
+
+  <div class="body">
+    <div class="section-title">Chấm điểm (1 – 10)</div>
+
+    <div class="criteria-group">
+      <!-- Đồ uống -->
+      <div class="criterion">
+        <div class="criterion-top">
+          <div class="criterion-label">
+            <span class="icon">🧋</span> Đồ uống
+          </div>
+          <div class="score-display" id="score-drink">–</div>
+        </div>
+        <div class="stars" data-key="drink"></div>
+      </div>
+
+      <!-- Không gian -->
+      <div class="criterion">
+        <div class="criterion-top">
+          <div class="criterion-label">
+            <span class="icon">🪴</span> Không gian
+          </div>
+          <div class="score-display" id="score-space">–</div>
+        </div>
+        <div class="stars" data-key="space"></div>
+      </div>
+
+      <!-- Phục vụ -->
+      <div class="criterion">
+        <div class="criterion-top">
+          <div class="criterion-label">
+            <span class="icon">🤝</span> Phục vụ
+          </div>
+          <div class="score-display" id="score-service">–</div>
+        </div>
+        <div class="stars" data-key="service"></div>
+      </div>
+
+      <!-- Giá cả -->
+      <div class="criterion">
+        <div class="criterion-top">
+          <div class="criterion-label">
+            <span class="icon">💰</span> Giá cả
+          </div>
+          <div class="score-display" id="score-price">–</div>
+        </div>
+        <div class="stars" data-key="price"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Nhận xét của bạn</div>
+    <div class="comment-section">
+      <textarea id="comment" placeholder="Bạn thích điều gì nhất? Có điều gì chúng tôi có thể cải thiện không? 😊"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitReview()">
+      Gửi đánh giá ✉️
+    </button>
+  </div>
+
+  <div class="footer">Cảm ơn bạn đã ghé thăm Hatcafe ♥</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ============================================================
+  // CẤU HÌNH – thay YOUR_SCRIPT_URL bằng URL Apps Script của bạn
+  // ============================================================
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrm5kz546OBDssN7IdmOvk36NeXonz1JuX-tH-Br1qxI5Jafe_HVex3KeNWnbPbq_lkg/exec";
+
+  // Trạng thái điểm
+  const scores = { drink: 0, space: 0, service: 0, price: 0 };
+
+  // Tạo các nút 1–10 cho mỗi tiêu chí
+  document.querySelectorAll(".stars").forEach(group => {
+    const key = group.dataset.key;
+    for (let i = 1; i <= 10; i++) {
+      const btn = document.createElement("button");
+      btn.className = "star-btn";
+      btn.textContent = i;
+      btn.dataset.val = i;
+      btn.addEventListener("click", () => {
+        scores[key] = i;
+        document.getElementById("score-" + key).textContent = i;
+        group.querySelectorAll(".star-btn").forEach(b => {
+          b.classList.toggle("active", parseInt(b.dataset.val) <= i);
+        });
+      });
+      group.appendChild(btn);
+    }
+  });
+
+  function showToast(msg, isError = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = "toast" + (isError ? " error" : "");
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 3500);
+  }
+
+  async function submitReview() {
+    const unfilled = Object.entries(scores).filter(([, v]) => v === 0);
+    if (unfilled.length > 0) {
+      showToast("⚠️ Vui lòng chấm điểm đủ 4 tiêu chí!", true);
+      return;
+    }
+
+    if (SCRIPT_URL === "YOUR_SCRIPT_URL") {
+      showToast("⚠️ Chưa cấu hình Google Script URL!", true);
+      return;
+    }
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Đang gửi…";
+
+    const payload = {
+      drink:   scores.drink,
+      space:   scores.space,
+      service: scores.service,
+      price:   scores.price,
+      comment: document.getElementById("comment").value.trim(),
+      timestamp: new Date().toLocaleString("vi-VN")
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      showToast("✅ Cảm ơn bạn! Đánh giá đã được ghi nhận.");
+      resetForm();
+    } catch (e) {
+      showToast("❌ Gửi thất bại, vui lòng thử lại.", true);
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Gửi đánh giá ✉️";
+  }
+
+  function resetForm() {
+    Object.keys(scores).forEach(k => { scores[k] = 0; });
+    document.querySelectorAll(".score-display").forEach(el => el.textContent = "–");
+    document.querySelectorAll(".star-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById("comment").value = "";
+  }
+</script>
+</body>
+</html>

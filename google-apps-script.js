@@ -1,33 +1,39 @@
 // ================================================================
 // GOOGLE APPS SCRIPT – dán toàn bộ code này vào Apps Script
-// Hướng dẫn: xem file HUONG_DAN_DEPLOY.md
+// Sau khi thay code mới: Deploy → Manage deployments → chọn bản hiện tại → Edit → New version → Deploy
 // ================================================================
+
+var HEADERS = ["Thời gian", "Đồ uống (1-10)", "Không gian (1-10)", "Phục vụ (1-10)", "Giá cả (1-10)", "Điểm TB", "Nhận xét"];
+
+function ensureHeaders(sheet) {
+  // Luôn kiểm tra hàng 1 — nếu chưa đúng thì ghi lại
+  var firstCell = sheet.getRange(1, 1).getValue();
+  if (firstCell !== HEADERS[0]) {
+    // Chèn 1 hàng trống lên đầu nếu đã có dữ liệu
+    if (sheet.getLastRow() > 0) {
+      sheet.insertRowBefore(1);
+    }
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+
+    // Định dạng tiêu đề
+    var header = sheet.getRange(1, 1, 1, HEADERS.length);
+    header.setBackground("#7c3e0a");
+    header.setFontColor("#ffffff");
+    header.setFontWeight("bold");
+    sheet.setFrozenRows(1);
+
+    // Điều chỉnh độ rộng cột
+    sheet.setColumnWidth(1, 160); // Thời gian
+    sheet.setColumnWidth(7, 280); // Nhận xét
+  }
+}
 
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-    // Tạo tiêu đề nếu sheet còn trống
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow([
-        "Thời gian",
-        "Đồ uống (1-10)",
-        "Không gian (1-10)",
-        "Phục vụ (1-10)",
-        "Giá cả (1-10)",
-        "Điểm trung bình",
-        "Nhận xét"
-      ]);
+    ensureHeaders(sheet);
 
-      // Định dạng hàng tiêu đề
-      var header = sheet.getRange(1, 1, 1, 7);
-      header.setBackground("#7c3e0a");
-      header.setFontColor("#ffffff");
-      header.setFontWeight("bold");
-      sheet.setFrozenRows(1);
-    }
-
-    // Parse dữ liệu gửi lên
     var data = JSON.parse(e.postData.contents);
 
     var drink   = Number(data.drink)   || 0;
@@ -51,8 +57,16 @@ function doPost(e) {
   }
 }
 
-// Hàm test – chạy thủ công để kiểm tra sheet
+// Chạy hàm này thủ công để tạo/sửa tiêu đề ngay lập tức
+function setupHeaders() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  ensureHeaders(sheet);
+  Logger.log("Done: headers set on sheet " + sheet.getName());
+}
+
+// Hàm test gửi 1 dòng mẫu
 function testInsert() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  sheet.appendRow(["Test", 8, 9, 7, 8, 8.0, "Đây là dòng test"]);
+  ensureHeaders(sheet);
+  sheet.appendRow(["Test " + new Date().toLocaleString("vi-VN"), 8, 9, 7, 8, "8.0", "Đây là dòng test"]);
 }

@@ -111,19 +111,25 @@
       justify-content: center;
     }
 
-    .star-btn:hover,
-    .star-btn.active {
-      background: #c8540a;
-      border-color: #c8540a;
+    .star-btn:hover {
+      background: #e87a30;
+      border-color: #e87a30;
       color: #fff;
       transform: scale(1.1);
     }
 
-    .star-btn.active ~ .star-btn {
-      background: #fff;
-      border-color: #e8c9a0;
-      color: #b08050;
-      transform: scale(1);
+    .star-btn.active {
+      background: #c8540a;
+      border-color: #c8540a;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .star-btn.selected {
+      background: #8b2a00;
+      border-color: #8b2a00;
+      color: #fff;
+      transform: scale(1.15);
     }
 
     .score-display {
@@ -309,7 +315,10 @@
         scores[key] = i;
         document.getElementById("score-" + key).textContent = i;
         group.querySelectorAll(".star-btn").forEach(b => {
-          b.classList.toggle("active", parseInt(b.dataset.val) <= i);
+          const v = parseInt(b.dataset.val);
+          b.classList.remove("active", "selected");
+          if (v < i)  b.classList.add("active");
+          if (v === i) b.classList.add("selected");
         });
       });
       group.appendChild(btn);

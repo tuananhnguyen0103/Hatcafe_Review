@@ -3,277 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hatcafe – Đánh giá trải nghiệm</title>
+  <title>Hạt Cafe – Đánh giá trải nghiệm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
   <style>
+    /* Một thẻ nâu kem giữa nền cà phê đậm: tìm hóa đơn → chấm điểm → thông tin liên hệ → gửi */
+    :root {
+      --nen: #1a0a00;
+      --the: #fff8f2;
+      --muc: #ffffff;
+      --vien: #f0ddc8;
+      --chu: #3b1a07;
+      --chu-nhat: #8a6448;
+      --nau-1: #3b1a07;
+      --nau-2: #7c3e0a;
+      --vang: #f5c97a;
+      --vang-nhat: #d4a96a;
+      --cam: #c8540a;
+      --cam-2: #e87a30;
+      --cam-dam: #8b2a00;
+      --loi: #b0290a;
+      --tot: #2c7a4b;
+      --tot-nen: #e3f2e8;
+      --font: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    [hidden] { display: none !important; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #1a0a00;
+      font-family: var(--font);
+      background: var(--nen);
+      color: var(--chu);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      display: flex; justify-content: center; align-items: flex-start;
+      padding: 20px max(14px, env(safe-area-inset-right)) 32px max(14px, env(safe-area-inset-left));
     }
+    .card { background: var(--the); border-radius: 24px; max-width: 480px; width: 100%; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+    .header { background: linear-gradient(135deg, var(--nau-1) 0%, var(--nau-2) 100%); padding: 28px 24px 22px; text-align: center; }
+    .logo-icon { font-size: 38px; margin-bottom: 6px; }
+    .header h1 { color: var(--vang); font-size: 26px; font-weight: 800; letter-spacing: 2px; }
+    .header p { color: var(--vang-nhat); font-size: 14px; margin-top: 4px; }
+    .co-so { display: inline-flex; gap: 6px; align-items: center; margin-top: 12px; padding: 6px 14px; border-radius: 999px; background: rgba(245,201,122,.14); color: var(--vang); font-size: 13px; font-weight: 600; }
 
-    .card {
-      background: #fff8f2;
-      border-radius: 24px;
-      max-width: 480px;
-      width: 100%;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    .body { padding: 22px 22px 26px; display: grid; gap: 22px; }
+    .section { display: grid; gap: 12px; }
+    .section[hidden] { display: none; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--nau-2); text-transform: uppercase; letter-spacing: 1px; }
+    .muc { background: var(--muc); border: 1.5px solid var(--vien); border-radius: 14px; padding: 14px 16px; }
+    .goi-y { font-size: 13px; color: var(--chu-nhat); line-height: 1.5; }
+    .goi-y b { color: var(--chu); }
+
+    .nhap-hd { display: flex; gap: 8px; }
+    input[type="text"], input[type="tel"], textarea {
+      width: 100%; border: 1.5px solid var(--vien); border-radius: 12px; padding: 12px 14px;
+      font-size: 16px; font-family: inherit; color: var(--chu); background: var(--muc); outline: none;
     }
+    input:focus, textarea:focus { border-color: var(--cam); }
+    input::placeholder, textarea::placeholder { color: #c8a080; }
+    #soHD { font-size: 22px; font-weight: 700; letter-spacing: 6px; text-align: center; }
+    textarea { min-height: 90px; resize: vertical; font-size: 15px; }
+    label.nhan { font-size: 14px; font-weight: 600; display: block; margin-bottom: 6px; }
 
-    .header {
-      background: linear-gradient(135deg, #3b1a07 0%, #7c3e0a 100%);
-      padding: 36px 28px 28px;
-      text-align: center;
-      position: relative;
+    .btn { border: none; border-radius: 12px; font-family: inherit; font-weight: 700; cursor: pointer; }
+    .btn-cam { background: linear-gradient(135deg, var(--cam), var(--cam-2)); color: #fff; padding: 12px 18px; font-size: 15px; }
+    .btn-cam:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-gui { width: 100%; padding: 16px; font-size: 16px; letter-spacing: .5px; }
+    .btn-chu { background: none; color: var(--nau-2); text-decoration: underline; font-weight: 600; padding: 4px; font-size: 14px; }
+    .chon-cs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .chon-cs .btn { background: var(--muc); border: 1.5px solid var(--vien); color: var(--chu); padding: 14px; font-size: 15px; }
+
+    .ds-hd { display: grid; gap: 8px; }
+    .hd {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%;
+      text-align: left; background: var(--muc); border: 1.5px solid var(--vien); border-radius: 12px; padding: 12px 14px;
+      font-family: inherit; font-size: 15px; color: var(--chu); cursor: pointer;
     }
+    .hd .so { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .hd .phu { font-size: 13px; color: var(--chu-nhat); }
+    .hd .tien { font-weight: 700; white-space: nowrap; }
+    .hd[aria-pressed="true"] { border-color: var(--cam); background: #fff1e6; }
+    .hd:disabled { opacity: .55; cursor: not-allowed; }
+    .thong-bao { font-size: 14px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; background: #fdecea; color: var(--loi); }
+    .da-chon { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--tot-nen); color: var(--tot); border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
 
-    .logo-icon {
-      font-size: 42px;
-      margin-bottom: 8px;
-    }
-
-    .header h1 {
-      color: #f5c97a;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 2px;
-    }
-
-    .header p {
-      color: #d4a96a;
-      font-size: 14px;
-      margin-top: 6px;
-    }
-
-    .body {
-      padding: 28px 28px 32px;
-    }
-
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #7c3e0a;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 16px;
-    }
-
-    .criteria-group {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      margin-bottom: 28px;
-    }
-
-    .criterion {
-      background: #fff;
-      border: 1.5px solid #f0ddc8;
-      border-radius: 14px;
-      padding: 16px 18px;
-    }
-
-    .criterion-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #3b1a07;
-      margin-bottom: 12px;
-    }
-
-    .criterion-label .icon { font-size: 18px; }
-
-    .stars {
-      display: flex;
-      gap: 6px;
-    }
-
+    .criteria-group { display: grid; gap: 14px; }
+    .criterion { background: var(--muc); border: 1.5px solid var(--vien); border-radius: 14px; padding: 14px 14px 16px; }
+    .criterion-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .criterion-label { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+    .score-display { font-size: 22px; font-weight: 800; color: var(--cam); min-width: 32px; text-align: right; }
+    .stars { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; }
     .star-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 2px solid #e8c9a0;
-      background: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      color: #b08050;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      aspect-ratio: 1; border-radius: 50%; border: 2px solid #e8c9a0; background: #fff;
+      font-size: 13px; font-weight: 700; color: #b08050; cursor: pointer; font-family: inherit; padding: 0;
     }
+    .star-btn.active { background: var(--cam); border-color: var(--cam); color: #fff; }
+    .star-btn.selected { background: var(--cam-dam); border-color: var(--cam-dam); color: #fff; transform: scale(1.12); }
 
-    .star-btn:hover {
-      background: #e87a30;
-      border-color: #e87a30;
-      color: #fff;
-      transform: scale(1.1);
-    }
+    .moi-sdt { display: flex; gap: 10px; align-items: flex-start; background: #fff1e6; border: 1.5px dashed #f0b98a; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+    .moi-sdt b { color: var(--cam); }
+    .truong { display: grid; gap: 12px; }
+    .dong-y { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--chu-nhat); }
+    .dong-y input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--cam); flex: none; }
 
-    .star-btn.active {
-      background: #c8540a;
-      border-color: #c8540a;
-      color: #fff;
-      transform: scale(1.05);
-    }
-
-    .star-btn.selected {
-      background: #8b2a00;
-      border-color: #8b2a00;
-      color: #fff;
-      transform: scale(1.15);
-    }
-
-    .score-display {
-      margin-left: auto;
-      font-size: 22px;
-      font-weight: 800;
-      color: #c8540a;
-      min-width: 32px;
-      text-align: right;
-    }
-
-    .criterion-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .comment-section { margin-bottom: 28px; }
-
-    .comment-section textarea {
-      width: 100%;
-      border: 1.5px solid #f0ddc8;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 14px;
-      font-family: inherit;
-      color: #3b1a07;
-      background: #fff;
-      resize: vertical;
-      min-height: 100px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .comment-section textarea:focus {
-      border-color: #c8540a;
-    }
-
-    .comment-section textarea::placeholder { color: #c8a080; }
-
-    .submit-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #c8540a, #e87a30);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: opacity 0.2s, transform 0.1s;
-    }
-
-    .submit-btn:hover { opacity: 0.9; }
-    .submit-btn:active { transform: scale(0.98); }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .toast {
-      display: none;
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #b0290a;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-      z-index: 99;
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-      to   { transform: translateX(-50%) translateY(0); opacity: 1; }
-    }
-
-    /* Modal thành công */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-    }
+    .footer { text-align: center; padding: 0 24px 20px; font-size: 11px; color: #c8a080; }
+    .toast { display: none; position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: var(--loi); color: #fff; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: 0 6px 24px rgba(0,0,0,.3); z-index: 99; max-width: 92vw; text-align: center; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
     .modal-overlay.show { display: flex; }
-
-    .modal-box {
-      background: #fff8f2;
-      border-radius: 24px;
-      padding: 40px 32px 32px;
-      max-width: 320px;
-      width: 90%;
-      text-align: center;
-      animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1);
+    .modal-box { background: var(--the); border-radius: 24px; padding: 36px 28px 28px; max-width: 340px; width: 100%; text-align: center; }
+    .modal-icon { font-size: 52px; margin-bottom: 10px; }
+    .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .modal-sub { font-size: 14px; color: #7c5030; margin-bottom: 24px; line-height: 1.55; }
+    .dang-tai { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.5); border-top-color: #fff; border-radius: 50%; vertical-align: -3px; margin-right: 6px; }
+    @media (prefers-reduced-motion: no-preference) {
+      .dang-tai { animation: quay .8s linear infinite; }
+      .star-btn, .hd { transition: background-color .15s, border-color .15s, transform .1s; }
     }
-
-    @keyframes popIn {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-
-    .modal-icon { font-size: 56px; margin-bottom: 12px; }
-
-    .modal-title {
-      font-size: 22px;
-      font-weight: 800;
-      color: #3b1a07;
-      margin-bottom: 8px;
-    }
-
-    .modal-sub {
-      font-size: 14px;
-      color: #7c5030;
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
-
-    .modal-ok {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #c8540a, #e87a30);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-    }
-    .modal-ok:active { opacity: 0.85; }
-
-    .footer {
-      text-align: center;
-      padding: 0 28px 20px;
-      font-size: 11px;
-      color: #c8a080;
-    }
+    @keyframes quay { to { transform: rotate(360deg); } }
+    :focus-visible { outline: 2px solid var(--cam); outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -281,187 +127,256 @@
 <div class="card">
   <div class="header">
     <div class="logo-icon">☕</div>
-    <h1>HATCAFE</h1>
+    <h1>HẠT CAFE</h1>
     <p>Chia sẻ trải nghiệm của bạn với chúng tôi</p>
+    <div class="co-so" id="nhanCoSo" hidden>📍 <span id="tenCoSo"></span></div>
   </div>
 
   <div class="body">
-    <div class="section-title">Chấm điểm (1 – 10)</div>
-
-    <div class="criteria-group">
-      <!-- Đồ uống -->
-      <div class="criterion">
-        <div class="criterion-top">
-          <div class="criterion-label">
-            <span class="icon">🧋</span> Đồ uống
-          </div>
-          <div class="score-display" id="score-drink">–</div>
+    <!-- 1. Hóa đơn -->
+    <section class="section" id="buocHoaDon">
+      <div class="section-title">Hóa đơn của bạn</div>
+      <div id="khungChonCoSo" class="section" hidden>
+        <p class="goi-y">Bạn đang ở cơ sở nào của Hạt Cafe?</p>
+        <div class="chon-cs">
+          <button class="btn" type="button" data-cs="1">Cơ sở 1</button>
+          <button class="btn" type="button" data-cs="2">Cơ sở 2</button>
         </div>
-        <div class="stars" data-key="drink"></div>
       </div>
-
-      <!-- Không gian -->
-      <div class="criterion">
-        <div class="criterion-top">
-          <div class="criterion-label">
-            <span class="icon">🪴</span> Không gian
-          </div>
-          <div class="score-display" id="score-space">–</div>
-        </div>
-        <div class="stars" data-key="space"></div>
+      <div id="khungNhapHD" class="section" hidden>
+        <div class="muc goi-y">Số hóa đơn in ở đầu bill, gồm <b>10 chữ số</b>. Bạn chỉ cần nhập <b>4 số cuối</b>. Ví dụ hóa đơn số 26020<b>13823</b> → nhập <b>3823</b>.</div>
+        <form class="nhap-hd" id="formTim" autocomplete="off">
+          <input type="text" id="soHD" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="3823" aria-label="4 số cuối của số hóa đơn">
+          <button class="btn btn-cam" type="submit" id="nutTim">Tìm</button>
+        </form>
+        <div id="ketQua" class="section"></div>
       </div>
+    </section>
 
-      <!-- Phục vụ -->
-      <div class="criterion">
-        <div class="criterion-top">
-          <div class="criterion-label">
-            <span class="icon">🤝</span> Phục vụ
-          </div>
-          <div class="score-display" id="score-service">–</div>
-        </div>
-        <div class="stars" data-key="service"></div>
+    <!-- 2. Chấm điểm -->
+    <section class="section" id="buocDanhGia" hidden>
+      <div id="hdDaChon"></div>
+      <div class="section-title">Chấm điểm (1 – 10)</div>
+      <div class="criteria-group" id="tieuChi"></div>
+      <div class="section-title">Nhận xét của bạn</div>
+      <textarea id="nhanXet" maxlength="1000" placeholder="Bạn thích điều gì nhất? Quán cần cải thiện điều gì?"></textarea>
+    </section>
+
+    <!-- 3. Thông tin liên hệ -->
+    <section class="section" id="buocThongTin" hidden>
+      <div class="section-title">Thông tin của bạn (không bắt buộc)</div>
+      <div class="moi-sdt"><span>📞</span><span>Bạn vui lòng để lại <b>số điện thoại</b> để Hạt Cafe phản hồi góp ý và phục vụ bạn tốt hơn nhé.</span></div>
+      <div class="truong">
+        <div><label class="nhan" for="sdt">Số điện thoại</label><input type="tel" id="sdt" inputmode="tel" maxlength="15" placeholder="09xx xxx xxx" autocomplete="tel"></div>
+        <div><label class="nhan" for="ten">Họ tên</label><input type="text" id="ten" maxlength="80" placeholder="Tên của bạn" autocomplete="name"></div>
+        <div><label class="nhan" for="mon">Món đã dùng</label><input type="text" id="mon" maxlength="300" placeholder="Ví dụ: Bạc xỉu, Trà đào cam sả"></div>
+        <label class="dong-y" id="khungDongY" hidden><input type="checkbox" id="dongY"><span>Tôi đồng ý để Hạt Cafe lưu tên và số điện thoại này để liên hệ, chăm sóc khách hàng.</span></label>
       </div>
-
-      <!-- Giá cả -->
-      <div class="criterion">
-        <div class="criterion-top">
-          <div class="criterion-label">
-            <span class="icon">💰</span> Giá cả
-          </div>
-          <div class="score-display" id="score-price">–</div>
-        </div>
-        <div class="stars" data-key="price"></div>
-      </div>
-    </div>
-
-    <div class="section-title">Nhận xét của bạn</div>
-    <div class="comment-section">
-      <textarea id="comment" placeholder="Bạn thích điều gì nhất? Có điều gì chúng tôi có thể cải thiện không? 😊"></textarea>
-    </div>
-
-    <button class="submit-btn" id="submitBtn" onclick="submitReview()">
-      Gửi đánh giá ✉️
-    </button>
+      <button class="btn btn-cam btn-gui" type="button" id="nutGui">Gửi đánh giá ✉️</button>
+    </section>
   </div>
 
-  <div class="footer">Cảm ơn bạn đã ghé thăm Hatcafe ♥</div>
+  <div class="footer">Cảm ơn bạn đã ghé thăm Hạt Cafe ♥</div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="alert"></div>
 
-<!-- Modal thành công -->
 <div class="modal-overlay" id="successModal">
-  <div class="modal-box">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="tieuDeCamOn">
     <div class="modal-icon">☕</div>
-    <div class="modal-title">Cảm ơn bạn!</div>
-    <div class="modal-sub">Đánh giá của bạn đã được ghi nhận.<br>Hẹn gặp lại tại Hatcafe! ♥</div>
-    <button class="modal-ok" onclick="closeAndExit()">OK</button>
+    <div class="modal-title" id="tieuDeCamOn">Cảm ơn bạn!</div>
+    <div class="modal-sub" id="loiCamOn">Đánh giá của bạn đã được ghi nhận.<br>Hẹn gặp lại tại Hạt Cafe! ♥</div>
+    <button class="btn btn-cam btn-gui" type="button" id="nutXong">Xong</button>
   </div>
 </div>
 
 <script>
   // ============================================================
-  // CẤU HÌNH – thay YOUR_SCRIPT_URL bằng URL Apps Script của bạn
+  // Máy chủ: web app Apps Script của project HatCafe_HeThong (50_DanhGia.js)
   // ============================================================
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrm5kz546OBDssN7IdmOvk36NeXonz1JuX-tH-Br1qxI5Jafe_HVex3KeNWnbPbq_lkg/exec";
+  const API = 'https://script.google.com/macros/s/AKfycbymTA5ey9fORKATq06GHFofq1EwXVg3dnGYNp9B98DHv0UL7IGinH7v6ZPH7wJ1xG2KCA/exec';
+  const TEN_CO_SO = { '1': 'Cơ sở 1', '2': 'Cơ sở 2' };
+  const TIEU_CHI = [
+    ['TraiNghiem', '☕', 'Trải nghiệm chung'],
+    ['ChatLuong', '🧋', 'Chất lượng đồ uống'],
+    ['DichVu', '🤝', 'Dịch vụ'],
+    ['TocDo', '⏱️', 'Tốc độ phục vụ'],
+    ['ThaiDo', '😊', 'Thái độ nhân viên'],
+  ];
 
-  // Trạng thái điểm
-  const scores = { drink: 0, space: 0, service: 0, price: 0 };
+  const $ = id => document.getElementById(id);
+  const tien = n => Number(n || 0).toLocaleString('vi-VN') + 'đ';
+  const state = { cs: '', hoaDon: null, khongHoaDon: false, diem: {} };
 
-  // Tạo các nút 1–10 cho mỗi tiêu chí
-  document.querySelectorAll(".stars").forEach(group => {
-    const key = group.dataset.key;
-    for (let i = 1; i <= 10; i++) {
-      const btn = document.createElement("button");
-      btn.className = "star-btn";
-      btn.textContent = i;
-      btn.dataset.val = i;
-      btn.addEventListener("click", () => {
-        scores[key] = i;
-        document.getElementById("score-" + key).textContent = i;
-        group.querySelectorAll(".star-btn").forEach(b => {
-          const v = parseInt(b.dataset.val);
-          b.classList.remove("active", "selected");
-          if (v < i)  b.classList.add("active");
-          if (v === i) b.classList.add("selected");
-        });
-      });
-      group.appendChild(btn);
+  // Mã máy: lưu trong trình duyệt để máy chủ biết các phiếu cùng một máy
+  function maMay() {
+    try {
+      let m = localStorage.getItem('hc_ma_may');
+      if (!m) {
+        m = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+        localStorage.setItem('hc_ma_may', m);
+      }
+      return m;
+    } catch (e) { return ''; }
+  }
+
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(toast.h);
+    toast.h = setTimeout(() => { t.style.display = 'none'; }, 4000);
+  }
+
+  // ---- 1. Cơ sở (từ mã QR ?cs=1) ----
+  function chonCoSo(cs) {
+    state.cs = cs;
+    $('tenCoSo').textContent = 'Bạn đang ở ' + TEN_CO_SO[cs];
+    $('nhanCoSo').hidden = false;
+    $('khungChonCoSo').hidden = true;
+    $('khungNhapHD').hidden = false;
+  }
+  const csQR = new URLSearchParams(location.search).get('cs');
+  if (TEN_CO_SO[csQR]) chonCoSo(csQR); else $('khungChonCoSo').hidden = false;
+  document.querySelectorAll('[data-cs]').forEach(b => b.addEventListener('click', () => chonCoSo(b.dataset.cs)));
+
+  // ---- 2. Tìm hóa đơn theo số cuối ----
+  $('formTim').addEventListener('submit', async e => {
+    e.preventDefault();
+    const so = $('soHD').value.replace(/\D/g, '');
+    if (so.length < 3) { toast('Bạn nhập 4 số cuối của hóa đơn nhé.'); return; }
+    const nut = $('nutTim');
+    nut.disabled = true; nut.innerHTML = '<span class="dang-tai"></span>Tìm';
+    try {
+      const r = await (await fetch(API + '?action=timHoaDon&cs=' + state.cs + '&so=' + so)).json();
+      if (!r.ok) { toast(r.loi || 'Không tìm được hóa đơn, bạn thử lại nhé.'); return; }
+      hienKetQua(r.hoaDon, so);
+    } catch (err) {
+      toast('Mạng đang chậm, bạn thử lại nhé.');
+    } finally {
+      nut.disabled = false; nut.textContent = 'Tìm';
     }
   });
 
-  function showToast(msg, isError = false) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = "toast" + (isError ? " error" : "");
-    t.style.display = "block";
-    setTimeout(() => { t.style.display = "none"; }, 3500);
+  function hienKetQua(ds, so) {
+    const k = $('ketQua');
+    k.innerHTML = '';
+    if (!ds.length) {
+      k.innerHTML = '<div class="thong-bao">Chưa tìm thấy hóa đơn có số cuối <b>' + so + '</b> ở ' + TEN_CO_SO[state.cs] +
+        '. Bạn kiểm tra lại số trên bill giúp mình nhé.</div>' +
+        '<button class="btn btn-chu" type="button" id="nutBoQua">Gửi nhận xét không kèm hóa đơn</button>';
+      $('nutBoQua').addEventListener('click', () => batDauDanhGia(null));
+      return;
+    }
+    const p = document.createElement('p');
+    p.className = 'goi-y';
+    p.textContent = ds.length === 1 ? 'Đây có phải hóa đơn của bạn? Bấm để chọn.' : 'Có ' + ds.length + ' hóa đơn khớp, bạn chọn đúng hóa đơn của mình:';
+    k.appendChild(p);
+    const list = document.createElement('div');
+    list.className = 'ds-hd';
+    ds.forEach(h => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'hd';
+      b.disabled = !!h.daDanhGia;
+      b.innerHTML = '<span><span class="so">…' + h.so.slice(-6) + '</span><br><span class="phu">' + h.gio + ' · ngày ' + h.ngay +
+        (h.daDanhGia ? ' · đã được đánh giá' : '') + '</span></span><span class="tien">' + tien(h.tong) + '</span>';
+      b.addEventListener('click', () => batDauDanhGia(h));
+      list.appendChild(b);
+    });
+    k.appendChild(list);
   }
 
-  async function submitReview() {
-    const unfilled = Object.entries(scores).filter(([, v]) => v === 0);
-    if (unfilled.length > 0) {
-      showToast("⚠️ Vui lòng chấm điểm đủ 4 tiêu chí!", true);
-      return;
-    }
+  // ---- 3. Chấm điểm + thông tin liên hệ ----
+  function batDauDanhGia(h) {
+    state.hoaDon = h;
+    state.khongHoaDon = !h;
+    $('buocHoaDon').hidden = true;
+    $('hdDaChon').innerHTML = h
+      ? '<div class="da-chon"><span>✓ Hóa đơn …' + h.so.slice(-6) + ' · ' + h.gio + ' · ' + tien(h.tong) + '</span><button class="btn btn-chu" type="button" id="nutDoiHD">Đổi</button></div>'
+      : '<div class="da-chon"><span>Nhận xét không kèm hóa đơn</span><button class="btn btn-chu" type="button" id="nutDoiHD">Đổi</button></div>';
+    $('nutDoiHD').addEventListener('click', () => {
+      $('buocHoaDon').hidden = false; $('buocDanhGia').hidden = true; $('buocThongTin').hidden = true;
+    });
+    $('buocDanhGia').hidden = false;
+    $('buocThongTin').hidden = false;
+    $('buocDanhGia').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
-    if (SCRIPT_URL === "YOUR_SCRIPT_URL") {
-      showToast("⚠️ Chưa cấu hình Google Script URL!", true);
-      return;
-    }
-
-    const btn = document.getElementById("submitBtn");
-    btn.disabled = true;
-    btn.textContent = "Đang gửi…";
-
-    const payload = {
-      drink:   scores.drink,
-      space:   scores.space,
-      service: scores.service,
-      price:   scores.price,
-      comment: document.getElementById("comment").value.trim(),
-      timestamp: new Date().toLocaleString("vi-VN")
-    };
-
-    try {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+  TIEU_CHI.forEach(([k, icon, ten]) => {
+    const div = document.createElement('div');
+    div.className = 'criterion';
+    div.innerHTML = '<div class="criterion-top"><div class="criterion-label"><span>' + icon + '</span>' + ten + '</div>' +
+      '<div class="score-display" id="diem-' + k + '">–</div></div><div class="stars" role="group" aria-label="' + ten + '"></div>';
+    const nhom = div.querySelector('.stars');
+    for (let i = 1; i <= 10; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'star-btn';
+      b.textContent = i;
+      b.setAttribute('aria-label', ten + ' ' + i + ' điểm');
+      b.addEventListener('click', () => {
+        state.diem[k] = i;
+        $('diem-' + k).textContent = i;
+        nhom.querySelectorAll('.star-btn').forEach((x, j) => {
+          x.classList.toggle('active', j + 1 < i);
+          x.classList.toggle('selected', j + 1 === i);
+          x.setAttribute('aria-pressed', j + 1 === i);
+        });
       });
-      document.getElementById("successModal").classList.add("show");
-    } catch (e) {
-      showToast("❌ Gửi thất bại, vui lòng thử lại.");
+      nhom.appendChild(b);
     }
+    $('tieuChi').appendChild(div);
+  });
 
-    btn.disabled = false;
-    btn.textContent = "Gửi đánh giá ✉️";
-  }
+  // Có tên hoặc SĐT thì hiện ô đồng ý lưu thông tin
+  ['ten', 'sdt'].forEach(id => $(id).addEventListener('input', () => {
+    $('khungDongY').hidden = !($('ten').value.trim() || $('sdt').value.trim());
+  }));
 
-  function closeAndExit() {
+  $('nutGui').addEventListener('click', async () => {
+    const thieu = TIEU_CHI.filter(([k]) => !state.diem[k]);
+    if (thieu.length) { toast('Bạn chấm điểm đủ ' + TIEU_CHI.length + ' mục giúp mình nhé (còn ' + thieu.length + ' mục).'); return; }
+    const sdt = $('sdt').value.trim();
+    if (sdt && !/^(0|\+?84)\d{9}$/.test(sdt.replace(/[\s.\-]/g, ''))) { toast('Số điện thoại chưa đúng, bạn kiểm tra lại nhé.'); return; }
+    const ten = $('ten').value.trim();
+    if ((ten || sdt) && !$('dongY').checked) { toast('Bạn tick ô đồng ý để quán lưu thông tin liên hệ nhé.'); return; }
+
+    const nut = $('nutGui');
+    nut.disabled = true; nut.innerHTML = '<span class="dang-tai"></span>Đang gửi…';
+    const goi = {
+      cs: state.cs,
+      soHoaDon: state.hoaDon ? state.hoaDon.so : '',
+      diem: state.diem,
+      nhanXet: $('nhanXet').value.trim(),
+      ten, sdt,
+      mon: $('mon').value.trim(),
+      dongY: $('dongY').checked,
+      maMay: maMay(),
+    };
+    try {
+      // text/plain để trình duyệt gửi thẳng, không cần hỏi trước (Apps Script không trả lời OPTIONS)
+      const r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(goi) })).json();
+      if (!r.ok) { toast(r.loi || 'Gửi chưa được, bạn thử lại nhé.'); return; }
+      $('loiCamOn').innerHTML = (state.hoaDon ? 'Đánh giá cho hóa đơn …' + state.hoaDon.so.slice(-6) + ' đã được ghi nhận.' : 'Nhận xét của bạn đã được ghi nhận.') +
+        '<br>Hẹn gặp lại bạn tại Hạt Cafe! ♥';
+      $('successModal').classList.add('show');
+    } catch (err) {
+      toast('Mạng đang chậm, gửi chưa được. Bạn thử lại nhé.');
+    } finally {
+      nut.disabled = false; nut.textContent = 'Gửi đánh giá ✉️';
+    }
+  });
+
+  $('nutXong').addEventListener('click', () => {
     window.close();
-    // Fallback nếu trình duyệt không cho đóng tab (mobile thường vậy)
+    // Trình duyệt điện thoại thường không cho đóng tab: thay bằng màn hình cảm ơn
     setTimeout(() => {
-      document.getElementById("successModal").classList.remove("show");
-      resetForm();
-      document.body.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a0a00;font-family:sans-serif;text-align:center;padding:20px;">
-          <div>
-            <div style="font-size:60px">☕</div>
-            <div style="color:#f5c97a;font-size:22px;font-weight:700;margin:16px 0 8px">Cảm ơn bạn!</div>
-            <div style="color:#d4a96a;font-size:14px">Bạn có thể đóng tab này.</div>
-          </div>
-        </div>`;
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;text-align:center;padding:20px;font-family:var(--font)">' +
+        '<div><div style="font-size:60px">☕</div><div style="color:#f5c97a;font-size:22px;font-weight:700;margin:16px 0 8px">Cảm ơn bạn!</div>' +
+        '<div style="color:#d4a96a;font-size:14px">Bạn có thể đóng trang này.</div></div></div>';
     }, 300);
-  }
-
-  function resetForm() {
-    Object.keys(scores).forEach(k => { scores[k] = 0; });
-    document.querySelectorAll(".score-display").forEach(el => el.textContent = "–");
-    document.querySelectorAll(".star-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById("comment").value = "";
-  }
+  });
 </script>
 </body>
 </html>

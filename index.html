@@ -372,13 +372,15 @@
       const div = document.createElement('div');
       div.className = 'mon';
       div.innerHTML = '<div class="mon-dong"><div><div class="mon-ten">' + esc(tenMon(m.ten)) + '</div><div class="mon-phu">' +
-        m.sl + ' ' + esc(String(m.dvt).toLowerCase()) + ' × ' + tien(m.gia) + '</div></div><div class="mon-tien">' + tien(m.thanhTien) + '</div></div>';
+        m.sl + ' ' + esc(String(m.dvt).toLowerCase()) + ' × ' + tien(m.gia) + '</div></div><div class="mon-tien">' + tien(m.thanhTien) + '</div></div>' +
+        (m.kem || []).map(k => '<div class="mon-dong"><span class="mon-phu">+ ' + esc(tenMon(k.ten)) + (k.sl > 1 ? ' × ' + k.sl : '') +
+          '</span><span class="mon-phu">' + (k.thanhTien ? tien(k.thanhTien) : '') + '</span></div>').join('');
       if (m.chamDuoc) div.appendChild(nutCham(m));
       bill.appendChild(div);
     });
     // Tổng hóa đơn khác tổng các món: khuyến mãi hoặc phụ thu
     const tong = r.tong || h.tong;
-    const lech = r.mon.reduce((s, m) => s + m.thanhTien, 0) - tong;
+    const lech = r.mon.reduce((s, m) => s + m.thanhTien + (m.kem || []).reduce((t, k) => t + (k.thanhTien || 0), 0), 0) - tong;
     const dong = (ten, so) => '<div class="mon-dong" style="padding:0 0 10px"><span class="mon-phu">' + ten + '</span><span class="mon-phu">' + so + '</span></div>';
     bill.insertAdjacentHTML('beforeend', (r.mon.length && lech > 0 ? dong('Giảm giá, khuyến mãi', '−' + tien(lech)) : '') +
       (r.mon.length && lech < 0 ? dong('Phụ thu, VAT', '+' + tien(-lech)) : '') +

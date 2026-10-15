@@ -85,6 +85,9 @@
     .hd:disabled { opacity: .55; cursor: not-allowed; }
     .thong-bao { font-size: 14px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; background: #fdecea; color: var(--loi); }
     .da-chon { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--tot-nen); color: var(--tot); border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
+    .da-chon .btn-chu { white-space: nowrap; }
+    .hang-nut { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+    .nut-sai-bill { display: block; margin: 0 auto 8px; font-size: 13px; }
 
     /* Bill tổng quan + chấm từng món */
     .bill { background: var(--muc); border: 1.5px solid var(--vien); border-radius: 14px; padding: 14px 16px 6px; }
@@ -236,7 +239,7 @@
 
   const $ = id => document.getElementById(id);
   const tien = n => Number(n || 0).toLocaleString('vi-VN') + 'đ';
-  const state = { cs: '', hoaDon: null, khongHoaDon: false, diem: {}, chiTiet: null, monDG: {}, lanLay: 0 };
+  const state = { cs: '', hoaDon: null, khongHoaDon: false, diem: {}, chiTiet: null, monDG: {}, lanLay: 0, lanSai: 0 };
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   // Tên món CukCuk viết hoa: "LATTE MATCHA M" -> "Latte matcha M"
   const tenMon = s => String(s || '').toLocaleLowerCase('vi').replace(/^\S/, c => c.toLocaleUpperCase('vi')).replace(/ (s|m|l|xl)$/, x => x.toUpperCase());
@@ -295,12 +298,18 @@
     const k = $('ketQua');
     k.innerHTML = '';
     if (!ds.length) {
-      k.innerHTML = '<div class="thong-bao">Chưa tìm thấy hóa đơn có số cuối <b>' + so + '</b> ở ' + TEN_CO_SO[state.cs] +
-        '. Bạn kiểm tra lại số trên bill giúp mình nhé.</div>' +
-        '<button class="btn btn-chu" type="button" id="nutBoQua">Gửi nhận xét không kèm hóa đơn</button>';
+      // Nhập sai: chỉ rõ số vừa nhập, cho nhập lại ngay; sai từ lần 2 thì gợi ý thêm
+      state.lanSai++;
+      k.innerHTML = '<div class="thong-bao">Chưa tìm thấy hóa đơn có số cuối <b>' + esc(so) + '</b> ở ' + TEN_CO_SO[state.cs] +
+        '. Bạn xem lại số hóa đơn in ở đầu bill rồi nhập lại giúp mình nhé.' +
+        (state.lanSai >= 2 ? '<br>Vẫn chưa thấy? Bill vừa thanh toán có thể cần vài giây để lên hệ thống, bạn đợi chút rồi thử lại hoặc nhờ nhân viên kiểm tra giúp nhé.' : '') +
+        '</div><div class="hang-nut"><button class="btn btn-cam" type="button" id="nutNhapLai">Nhập lại số hóa đơn</button>' +
+        '<button class="btn btn-chu" type="button" id="nutBoQua">Gửi nhận xét không kèm hóa đơn</button></div>';
+      $('nutNhapLai').addEventListener('click', nhapLai);
       $('nutBoQua').addEventListener('click', () => batDauDanhGia(null));
       return;
     }
+    state.lanSai = 0;
     const p = document.createElement('p');
     p.className = 'goi-y';
     p.textContent = ds.length === 1 ? 'Đây có phải hóa đơn của bạn? Bấm để chọn.' : 'Có ' + ds.length + ' hóa đơn khớp, bạn chọn đúng hóa đơn của mình:';
@@ -318,6 +327,29 @@
       list.appendChild(b);
     });
     k.appendChild(list);
+    const lai = document.createElement('button');
+    lai.type = 'button';
+    lai.className = 'btn btn-chu';
+    lai.id = 'nutKhongThay';
+    lai.textContent = 'Không thấy hóa đơn của bạn? Nhập lại';
+    lai.addEventListener('click', nhapLai);
+    k.appendChild(lai);
+  }
+
+  // Quay về ô nhập số hóa đơn (nhập sai, chọn nhầm bill). Điểm 5 mục và nhận xét đã chấm vẫn giữ.
+  function nhapLai() {
+    state.lanLay++; // bỏ kết quả chi tiết bill cũ nếu còn đang tải
+    state.hoaDon = null;
+    state.khongHoaDon = false;
+    state.chiTiet = null;
+    state.monDG = {};
+    $('ketQua').innerHTML = '';
+    $('buocDanhGia').hidden = true;
+    $('buocThongTin').hidden = true;
+    $('buocHoaDon').hidden = false;
+    $('soHD').value = '';
+    $('buocHoaDon').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('soHD').focus();
   }
 
   // ---- 3. Chấm điểm + thông tin liên hệ ----
@@ -326,11 +358,9 @@
     state.khongHoaDon = !h;
     $('buocHoaDon').hidden = true;
     $('hdDaChon').innerHTML = h
-      ? '<div class="da-chon"><span>✓ Hóa đơn …' + h.so.slice(-6) + ' · ' + h.gio + ' · ' + tien(h.tong) + '</span><button class="btn btn-chu" type="button" id="nutDoiHD">Đổi</button></div>'
-      : '<div class="da-chon"><span>Nhận xét không kèm hóa đơn</span><button class="btn btn-chu" type="button" id="nutDoiHD">Đổi</button></div>';
-    $('nutDoiHD').addEventListener('click', () => {
-      $('buocHoaDon').hidden = false; $('buocDanhGia').hidden = true; $('buocThongTin').hidden = true;
-    });
+      ? '<div class="da-chon"><span>✓ Hóa đơn …' + esc(h.so.slice(-6)) + ' · ' + esc(h.gio) + ' · ' + tien(h.tong) + '</span><button class="btn btn-chu" type="button" id="nutDoiHD">Nhập lại</button></div>'
+      : '<div class="da-chon"><span>Nhận xét không kèm hóa đơn</span><button class="btn btn-chu" type="button" id="nutDoiHD">Nhập số hóa đơn</button></div>';
+    $('nutDoiHD').addEventListener('click', nhapLai);
     $('buocDanhGia').hidden = false;
     $('buocThongTin').hidden = false;
     $('buocDanhGia').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -384,7 +414,10 @@
     const dong = (ten, so) => '<div class="mon-dong" style="padding:0 0 10px"><span class="mon-phu">' + ten + '</span><span class="mon-phu">' + so + '</span></div>';
     bill.insertAdjacentHTML('beforeend', (r.mon.length && lech > 0 ? dong('Giảm giá, khuyến mãi', '−' + tien(lech)) : '') +
       (r.mon.length && lech < 0 ? dong('Phụ thu, VAT', '+' + tien(-lech)) : '') +
-      '<div class="bill-tong"><span>Tổng cộng</span><span>' + tien(tong) + '</span></div>');
+      '<div class="bill-tong"><span>Tổng cộng</span><span>' + tien(tong) + '</span></div>' +
+      '<button class="btn btn-chu nut-sai-bill" type="button" id="nutSaiBill">Không đúng bill của bạn? Nhập lại số hóa đơn</button>');
+    $('nutSaiBill').addEventListener('click', nhapLai);
+    capNhatDemMon();
   }
 
   function nutCham(m) {

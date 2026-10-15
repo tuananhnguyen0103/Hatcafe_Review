@@ -86,6 +86,32 @@
     .thong-bao { font-size: 14px; line-height: 1.5; padding: 12px 14px; border-radius: 12px; background: #fdecea; color: var(--loi); }
     .da-chon { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--tot-nen); color: var(--tot); border-radius: 12px; padding: 10px 14px; font-size: 14px; font-weight: 600; }
 
+    /* Bill tổng quan + chấm từng món */
+    .bill { background: var(--muc); border: 1.5px solid var(--vien); border-radius: 14px; padding: 14px 16px 6px; }
+    .bill-dau { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-weight: 700; }
+    .bill-dau .phu { font-size: 13px; font-weight: 500; color: var(--chu-nhat); }
+    .bill-gio { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 13px; color: var(--chu-nhat); }
+    .bill-gio b { color: var(--chu); font-variant-numeric: tabular-nums; }
+    .bill-goi-y { margin: 12px 0 2px; font-size: 13px; color: var(--chu-nhat); line-height: 1.5; }
+    .mon { border-top: 1px dashed var(--vien); padding: 12px 0; }
+    .bill-dau + .mon { margin-top: 10px; }
+    .mon-dong { display: flex; justify-content: space-between; gap: 10px; }
+    .mon-ten { font-weight: 600; font-size: 15px; }
+    .mon-phu { font-size: 13px; color: var(--chu-nhat); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .mon-tien { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .cham { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .cham button { border: 1.5px solid var(--vien); background: #fff; border-radius: 10px; padding: 9px 6px; font: 600 14px var(--font); color: var(--chu); cursor: pointer; }
+    .cham .on[aria-pressed="true"] { background: var(--tot-nen); border-color: var(--tot); color: var(--tot); }
+    .cham .chua[aria-pressed="true"] { background: #fdecea; border-color: var(--loi); color: var(--loi); }
+    .ly-do { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ly-do .nhan-ly-do { width: 100%; font-size: 12px; color: var(--chu-nhat); }
+    .chip { border: 1.5px solid #f0b98a; background: #fff; border-radius: 999px; padding: 6px 12px; font: 500 13px var(--font); color: var(--chu); cursor: pointer; }
+    .chip[aria-pressed="true"] { background: var(--cam); border-color: var(--cam); color: #fff; }
+    .bill-tong { display: flex; justify-content: space-between; border-top: 1.5px solid var(--vien); padding: 12px 0 8px; font-weight: 800; font-size: 16px; }
+    .bill-dang-lay { padding: 14px 0 10px; font-size: 14px; color: var(--chu-nhat); }
+    .dang-tai.toi { border-color: rgba(124,62,10,.25); border-top-color: var(--nau-2); }
+    .dem-mon { font-size: 12px; font-weight: 600; color: var(--tot); text-transform: none; letter-spacing: 0; }
+
     .criteria-group { display: grid; gap: 14px; }
     .criterion { background: var(--muc); border: 1.5px solid var(--vien); border-radius: 14px; padding: 14px 14px 16px; }
     .criterion-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -116,7 +142,7 @@
     .dang-tai { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.5); border-top-color: #fff; border-radius: 50%; vertical-align: -3px; margin-right: 6px; }
     @media (prefers-reduced-motion: no-preference) {
       .dang-tai { animation: quay .8s linear infinite; }
-      .star-btn, .hd { transition: background-color .15s, border-color .15s, transform .1s; }
+      .star-btn, .hd, .cham button, .chip { transition: background-color .15s, border-color .15s, transform .1s; }
     }
     @keyframes quay { to { transform: rotate(360deg); } }
     :focus-visible { outline: 2px solid var(--cam); outline-offset: 2px; }
@@ -156,6 +182,10 @@
     <!-- 2. Chấm điểm -->
     <section class="section" id="buocDanhGia" hidden>
       <div id="hdDaChon"></div>
+      <div id="khungBill" class="section" hidden>
+        <div class="section-title">Món của bạn thế nào? <span class="dem-mon" id="demMon"></span></div>
+        <div class="bill" id="bill"></div>
+      </div>
       <div class="section-title">Chấm điểm (1 – 10)</div>
       <div class="criteria-group" id="tieuChi"></div>
       <div class="section-title">Nhận xét của bạn</div>
@@ -169,7 +199,7 @@
       <div class="truong">
         <div><label class="nhan" for="sdt">Số điện thoại</label><input type="tel" id="sdt" inputmode="tel" maxlength="15" placeholder="09xx xxx xxx" autocomplete="tel"></div>
         <div><label class="nhan" for="ten">Họ tên</label><input type="text" id="ten" maxlength="80" placeholder="Tên của bạn" autocomplete="name"></div>
-        <div><label class="nhan" for="mon">Món đã dùng</label><input type="text" id="mon" maxlength="300" placeholder="Ví dụ: Bạc xỉu, Trà đào cam sả"></div>
+        <div id="khungMon"><label class="nhan" for="mon">Món đã dùng</label><input type="text" id="mon" maxlength="300" placeholder="Ví dụ: Bạc xỉu, Trà đào cam sả"></div>
         <label class="dong-y" id="khungDongY" hidden><input type="checkbox" id="dongY"><span>Tôi đồng ý để Hạt Cafe lưu tên và số điện thoại này để liên hệ, chăm sóc khách hàng.</span></label>
       </div>
       <button class="btn btn-cam btn-gui" type="button" id="nutGui">Gửi đánh giá ✉️</button>
@@ -206,7 +236,10 @@
 
   const $ = id => document.getElementById(id);
   const tien = n => Number(n || 0).toLocaleString('vi-VN') + 'đ';
-  const state = { cs: '', hoaDon: null, khongHoaDon: false, diem: {} };
+  const state = { cs: '', hoaDon: null, khongHoaDon: false, diem: {}, chiTiet: null, monDG: {}, lanLay: 0 };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Tên món CukCuk viết hoa: "LATTE MATCHA M" -> "Latte matcha M"
+  const tenMon = s => String(s || '').toLocaleLowerCase('vi').replace(/^\S/, c => c.toLocaleUpperCase('vi')).replace(/ (s|m|l|xl)$/, x => x.toUpperCase());
 
   // Mã máy: lưu trong trình duyệt để máy chủ biết các phiếu cùng một máy
   function maMay() {
@@ -301,6 +334,105 @@
     $('buocDanhGia').hidden = false;
     $('buocThongTin').hidden = false;
     $('buocDanhGia').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    layBill(h);
+  }
+
+  // ---- Bill tổng quan (giờ vào/ra, món, giá) + chấm Ổn / Chưa ổn từng món ----
+  async function layBill(h) {
+    const lan = ++state.lanLay;
+    state.chiTiet = null;
+    state.monDG = {};
+    capNhatDemMon();
+    $('khungMon').hidden = false;
+    $('khungBill').hidden = !h;
+    if (!h) return;
+    $('bill').innerHTML = dauBill(h, null) + '<div class="bill-dang-lay"><span class="dang-tai toi"></span>Đang lấy chi tiết hóa đơn…</div>';
+    let r = null;
+    try { r = await (await fetch(API + '?action=chiTiet&cs=' + state.cs + '&so=' + h.so)).json(); } catch (e) { r = null; }
+    if (lan !== state.lanLay) return; // khách đã đổi sang hóa đơn khác
+    if (!r || !r.ok) { $('khungBill').hidden = true; return; }
+    state.chiTiet = r;
+    // Có danh sách món thì khỏi bắt khách gõ "Món đã dùng"
+    $('khungMon').hidden = r.mon.length > 0;
+    veBill();
+  }
+
+  function dauBill(h, r) {
+    const gio = r && r.gioVao ? r.gioVao + ' → ' + r.gioRa : 'Thanh toán ' + h.gio;
+    const phu = (r && r.phut !== '' ? r.phut + ' phút · ' : '') + 'ngày ' + h.ngay;
+    return '<div class="bill-dau"><span>🕐 ' + esc(gio) + '</span><span class="phu">' + esc(phu) + '</span></div>';
+  }
+
+  function veBill() {
+    const r = state.chiTiet, h = state.hoaDon, bill = $('bill');
+    bill.innerHTML = dauBill(h, r) + (!r.mon.length
+      ? '<p class="bill-goi-y">Chưa lấy được danh sách món của hóa đơn này. Bạn ghi món đã dùng ở phần dưới giúp mình nhé.</p>'
+      : r.mon.some(m => m.chamDuoc) ? '<p class="bill-goi-y">Bấm <b>Ổn</b> hoặc <b>Chưa ổn</b> cho từng món để quán biết món nào cần làm tốt hơn.</p>' : '');
+    r.mon.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'mon';
+      div.innerHTML = '<div class="mon-dong"><div><div class="mon-ten">' + esc(tenMon(m.ten)) + '</div><div class="mon-phu">' +
+        m.sl + ' ' + esc(String(m.dvt).toLowerCase()) + ' × ' + tien(m.gia) + '</div></div><div class="mon-tien">' + tien(m.thanhTien) + '</div></div>';
+      if (m.chamDuoc) div.appendChild(nutCham(m));
+      bill.appendChild(div);
+    });
+    // Tổng hóa đơn khác tổng các món: khuyến mãi hoặc phụ thu
+    const tong = r.tong || h.tong;
+    const lech = r.mon.reduce((s, m) => s + m.thanhTien, 0) - tong;
+    const dong = (ten, so) => '<div class="mon-dong" style="padding:0 0 10px"><span class="mon-phu">' + ten + '</span><span class="mon-phu">' + so + '</span></div>';
+    bill.insertAdjacentHTML('beforeend', (r.mon.length && lech > 0 ? dong('Giảm giá, khuyến mãi', '−' + tien(lech)) : '') +
+      (r.mon.length && lech < 0 ? dong('Phụ thu, VAT', '+' + tien(-lech)) : '') +
+      '<div class="bill-tong"><span>Tổng cộng</span><span>' + tien(tong) + '</span></div>');
+  }
+
+  function nutCham(m) {
+    const khung = document.createElement('div');
+    const cham = document.createElement('div');
+    cham.className = 'cham';
+    cham.setAttribute('role', 'group');
+    cham.setAttribute('aria-label', 'Đánh giá ' + tenMon(m.ten));
+    const lyDo = document.createElement('div');
+    lyDo.className = 'ly-do';
+    lyDo.hidden = true;
+    lyDo.innerHTML = '<span class="nhan-ly-do">Chưa ổn ở điểm nào? (chọn nếu có)</span>';
+    const chips = (state.chiTiet.lyDo || []).map(l => {
+      const c = document.createElement('button');
+      c.type = 'button'; c.className = 'chip'; c.textContent = l; c.setAttribute('aria-pressed', 'false');
+      c.addEventListener('click', () => {
+        const d = state.monDG[m.id];
+        if (!d) return;
+        const co = d.lyDo.includes(l);
+        d.lyDo = co ? d.lyDo.filter(x => x !== l) : d.lyDo.concat(l);
+        c.setAttribute('aria-pressed', String(!co));
+      });
+      lyDo.appendChild(c);
+      return c;
+    });
+    const nut = [['on', '👍 Ổn'], ['chua', '👎 Chưa ổn']].map(([kq, nhan]) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = kq; b.textContent = nhan; b.dataset.kq = kq; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => {
+        // Bấm lại nút đang chọn để bỏ chọn
+        if (state.monDG[m.id] && state.monDG[m.id].kq === kq) delete state.monDG[m.id];
+        else state.monDG[m.id] = { kq, lyDo: [] };
+        const d = state.monDG[m.id];
+        nut.forEach(x => x.setAttribute('aria-pressed', String(!!d && d.kq === x.dataset.kq)));
+        chips.forEach(c => c.setAttribute('aria-pressed', 'false'));
+        lyDo.hidden = !(d && d.kq === 'chua');
+        capNhatDemMon();
+      });
+      cham.appendChild(b);
+      return b;
+    });
+    khung.appendChild(cham);
+    khung.appendChild(lyDo);
+    return khung;
+  }
+
+  function capNhatDemMon() {
+    const tong = state.chiTiet ? state.chiTiet.mon.filter(m => m.chamDuoc).length : 0;
+    const n = Object.keys(state.monDG).length;
+    $('demMon').textContent = tong ? '· đã chấm ' + n + '/' + tong : '';
   }
 
   TIEU_CHI.forEach(([k, icon, ten]) => {
@@ -350,7 +482,8 @@
       diem: state.diem,
       nhanXet: $('nhanXet').value.trim(),
       ten, sdt,
-      mon: $('mon').value.trim(),
+      mon: $('khungMon').hidden ? '' : $('mon').value.trim(),
+      monDG: Object.entries(state.monDG).map(([id, d]) => ({ id, kq: d.kq, lyDo: d.kq === 'chua' ? d.lyDo : [] })),
       dongY: $('dongY').checked,
       maMay: maMay(),
     };
@@ -358,8 +491,9 @@
       // text/plain để trình duyệt gửi thẳng, không cần hỏi trước (Apps Script không trả lời OPTIONS)
       const r = await (await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(goi) })).json();
       if (!r.ok) { toast(r.loi || 'Gửi chưa được, bạn thử lại nhé.'); return; }
+      const soMon = goi.monDG.length;
       $('loiCamOn').innerHTML = (state.hoaDon ? 'Đánh giá cho hóa đơn …' + state.hoaDon.so.slice(-6) + ' đã được ghi nhận.' : 'Nhận xét của bạn đã được ghi nhận.') +
-        '<br>Hẹn gặp lại bạn tại Hạt Cafe! ♥';
+        (soMon ? ' Cảm ơn bạn đã chấm ' + soMon + ' món.' : '') + '<br>Hẹn gặp lại bạn tại Hạt Cafe! ♥';
       $('successModal').classList.add('show');
     } catch (err) {
       toast('Mạng đang chậm, gửi chưa được. Bạn thử lại nhé.');
